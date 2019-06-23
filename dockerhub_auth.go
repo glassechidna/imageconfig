@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/containers/image/docker/reference"
-	_ "github.com/motemen/go-loghttp/global"
 	"github.com/pkg/errors"
 	"net/http"
 	"net/url"

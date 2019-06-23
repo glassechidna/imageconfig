@@ -6,8 +6,6 @@ require (
 	github.com/aws/aws-sdk-go v1.20.6
 	github.com/buger/jsonparser v0.0.0-20181115193947-bf1c66bbce23
 	github.com/containers/image v2.0.0+incompatible
-	github.com/motemen/go-loghttp v0.0.0-20170804080138-974ac5ceac27
-	github.com/motemen/go-nuts v0.0.0-20180315145558-42c35bdb11c2 // indirect
 	github.com/opencontainers/go-digest v1.0.0-rc1 // indirect
 	github.com/pkg/errors v0.8.1
 	github.com/stretchr/testify v1.3.0
