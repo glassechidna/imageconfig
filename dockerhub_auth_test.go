@@ -1,4 +1,4 @@
-package image
+package imageconfig
 
 import (
 	"github.com/containers/image/docker/reference"

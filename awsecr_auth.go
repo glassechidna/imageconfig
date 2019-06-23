@@ -1,4 +1,4 @@
-package image
+package imageconfig
 
 import (
 	"github.com/aws/aws-sdk-go/service/ecr/ecriface"
