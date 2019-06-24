@@ -11,7 +11,7 @@ import (
 )
 
 type Client struct {
-	Client http.Client
+	Client *http.Client
 	Auth   Authenticator
 }
 
@@ -29,12 +29,8 @@ func (c *Client) GetConfig(imageName string) (*Config, error) {
 	url := fmt.Sprintf("https://%s/v2/%s/blobs/%s", domain(r), reference.Path(r), digest)
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Add("Accept", "application/vnd.docker.distribution.manifest.v2+json")
-	err = c.Auth.Authenticate(req, r)
-	if err != nil {
-		return nil, errors.Wrap(err, "authenticating digest request")
-	}
 
-	resp, err := c.Client.Do(req)
+	resp, err := c.authenticatedRequest(req, r)
 	if err != nil {
 		return nil, errors.Wrap(err, "performing http req")
 	}
@@ -51,6 +47,24 @@ func (c *Client) GetConfig(imageName string) (*Config, error) {
 	}
 
 	return &conf.Config, nil
+}
+
+func (c *Client) authenticatedRequest(req *http.Request, r reference.Named) (*http.Response, error) {
+	auth := DefaultAuthenticator
+	if c != nil && c.Auth != nil {
+		auth = c.Auth
+	}
+
+	err := auth.Authenticate(req, r)
+	if err != nil {
+		return nil, errors.Wrap(err, "authenticating digest request")
+	}
+	client := http.DefaultClient
+	if c != nil && c.Client != nil {
+		client = c.Client
+	}
+
+	return client.Do(req)
 }
 
 func domain(r reference.Named) string {
@@ -72,12 +86,8 @@ func (c *Client) digest(r reference.Named) (string, error) {
 	req, _ := http.NewRequest("GET", url, nil)
 
 	req.Header.Add("Accept", "application/vnd.docker.distribution.manifest.v2+json")
-	err := c.Auth.Authenticate(req, r)
-	if err != nil {
-		return "", errors.Wrap(err, "authenticating digest request")
-	}
 
-	resp, err := c.Client.Do(req)
+	resp, err := c.authenticatedRequest(req, r)
 	if err != nil {
 		return "", errors.Wrap(err, "performing digest request")
 	}
