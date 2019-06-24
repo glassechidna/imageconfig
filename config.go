@@ -1,6 +1,9 @@
 package imageconfig
 
-import "time"
+import (
+	"strings"
+	"time"
+)
 
 type Config struct {
 	Hostname     string                 `json:"Hostname"`
@@ -22,6 +25,17 @@ type Config struct {
 	Entrypoint   interface{}            `json:"Entrypoint"`
 	OnBuild      interface{}            `json:"OnBuild"`
 	Labels       map[string]string      `json:"Labels"`
+}
+
+func (c *Config) EnvMap() map[string]string {
+	m := map[string]string{}
+
+	for _, kvp := range c.Env {
+		split := strings.SplitN(kvp, "=", 2)
+		m[split[0]] = split[1]
+	}
+
+	return m
 }
 
 type configWrapper struct {
